@@ -48,27 +48,32 @@ function draw() {
     drawBackground();
 
     trail.push({ x, y });
-    if (trail.length > 150) {
+    if (trail.length > 250) {
         trail.shift();
     }
 
-    ctx.beginPath();
     if (trail.length > 1) {
-        ctx.moveTo(trail[0].x, trail[0].y);
         for (let i = 1; i < trail.length; i++) {
+            ctx.beginPath();
+            ctx.moveTo(trail[i - 1].x, trail[i - 1].y);
             ctx.lineTo(trail[i].x, trail[i].y);
+
+            const gradient = ctx.createLinearGradient(
+                trail[i - 1].x,
+                trail[i - 1].y,
+                trail[i].x,
+                trail[i].y
+            );
+
+            const opacity = i / trail.length;
+            gradient.addColorStop(0, `rgba(255, 0, 0, ${opacity})`);
+            gradient.addColorStop(1, `rgba(139, 0, 0, ${opacity})`);
+
+            ctx.strokeStyle = gradient;
+            ctx.lineWidth = 3;
+            ctx.stroke();
         }
     }
-    ctx.moveTo(x, y);
-    ctx.lineTo(x + Math.cos(angle) * 4, y + Math.sin(angle) * 4);
-    ctx.strokeStyle = "red";
-    ctx.stroke();
-
-
-    // const gradient = ctx.createLinearGradient(x, y, x + 30, y + 30);
-    // gradient.addColorStop(0, "red");
-    // gradient.addColorStop(1, "darkred");
-    // ctx.fillStyle = gradient;
 
     ctx.save();
     ctx.translate(x, y);
