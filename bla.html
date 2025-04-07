@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kwadrat z wektorem</title>
+    <style>
+        #canvas {
+            border: solid 2px black;
+            background-color: blueviolet;
+            margin: 0 auto;
+            display: block;
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="canvas"></canvas>
+
+    <script>
+        const canvas = document.getElementById("canvas");
+        canvas.width = 800;
+        canvas.height = 400;
+        const ctx = canvas.getContext("2d");
+
+        // Pozycja, kąt i prędkość
+        let x = canvas.width / 2;
+        let y = canvas.height / 2;
+        let angle = Math.PI / 4; // Startowy kąt
+        const speed = 3;
+        const size = 20;
+
+        // Klawisze
+        let keys = {};
+
+        window.addEventListener("keydown", (e) => keys[e.key] = true);
+        window.addEventListener("keyup", (e) => keys[e.key] = false);
+
+        // Funkcja rysująca
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Rysowanie wektora
+            ctx.beginPath();
+            ctx.moveTo(x, y);
+            ctx.lineTo(x + Math.cos(angle) * 40, y + Math.sin(angle) * 40);
+            ctx.strokeStyle = "red";
+            ctx.lineWidth = 4;
+            ctx.stroke();
+
+            // Rysowanie kwadratu
+            ctx.save();
+            ctx.translate(x, y);
+            ctx.rotate(angle);
+            ctx.fillStyle = "red";
+            ctx.fillRect(-size / 2, -size / 2, size, size);
+            ctx.restore();
+        }
+
+        // Aktualizacja pozycji
+        function update() {
+            // Skręt podczas wciśnięcia strzałek
+            if (keys["ArrowLeft"]) {
+                angle -= 0.05;
+            }
+            if (keys["ArrowRight"]) {
+                angle += 0.05;
+            }
+
+            // Przesuwanie zgodnie z wektorem
+            x += Math.cos(angle) * speed;
+            y += Math.sin(angle) * speed;
+
+            // Odbicie od ścian
+            if (x - size / 2 < 0 || x + size / 2 > canvas.width) {
+                angle = Math.PI - angle; // Odbicie poziome
+            }
+            if (y - size / 2 < 0 || y + size / 2 > canvas.height) {
+                angle = -angle; // Odbicie pionowe
+            }
+
+            // Zapobieganie wyjściu poza krawędzie
+            x = Math.max(size / 2, Math.min(canvas.width - size / 2, x));
+            y = Math.max(size / 2, Math.min(canvas.height - size / 2, y));
+        }
+
+        // Pętla gry za pomocą setInterval
+        setInterval(() => {
+            update();
+            draw();
+        }, 1000 / 60); // 60 FPS
+    </script>
+</body>
+
+</html>

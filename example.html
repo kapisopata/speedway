@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+ 
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+ 
+<body>
+    <script>
+ 
+        class Czlowiek {
+            static planeta = "ZIEMIA";
+            psl; // public
+            #plec; // private
+            constructor(plec, psl) {
+                this.#plec = plec;
+                this.psl = psl;
+                this.rodze_sie();
+            }
+ 
+            rodze_sie() {
+                const el = document.createElement("button");
+                el.innerText = this.#plec;
+ 
+                // el.onclick = function () {
+                //     console.log(this); // element!!!
+                // }
+ 
+                // el.onclick = function () {
+                //     console.log(this, this.psl); // ob!!!
+                // }.bind(this);
+ 
+                // el.onclick = (e) => {
+                //     console.log(this, e.target); // ob , el
+                // }
+ 
+                el.onclick = () => this.klik()
+ 
+                document.body.append(el);
+            }
+ 
+            klik() {
+                console.log(this.#plec, Czlowiek.planeta);
+            }
+ 
+            // setPlec(p) {
+            //     this.#plec = p;
+            // }
+ 
+            set plec(p) {
+                this.#plec = p;
+            }
+ 
+            get plec() {
+                return this.#plec;
+            }
+        }
+ 
+        class Kosmita extends Czlowiek {
+            test() {
+                // this.plec // brak zasiegu , private!!!
+            }
+        }
+ 
+        maciej = new Czlowiek("M", 3255);
+        kati = new Czlowiek("K", 5454);
+        console.log(Czlowiek.planeta)
+    </script>
+</body>
+ 
+</html>
