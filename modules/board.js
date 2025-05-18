@@ -18,6 +18,14 @@ export function drawBackground(ctx) {
     ctx.fillStyle = "blueviolet";
     ctx.fill();
     ctx.stroke();
+
+    // ctx.beginPath();
+    // ctx.moveTo(190, 272);
+    // ctx.lineTo(190, 397);
+    // ctx.closePath();
+    // ctx.strokeStyle = "rgb(255,0,0)"
+    // ctx.lineWidth = 8;
+    // ctx.stroke();
 }
 
 export function isInMiddleArea(ctx, x, y) {

@@ -1,4 +1,11 @@
-import { canvas_width, canvas_height, image_path, x, y, speed, angle } from './config.js';
+import { canvas_width, canvas_height, image_path } from './config.js';
+
+const playerColors = {
+    1: { main: '#FF0000', dark: '#8B0000' },
+    2: { main: '#FFFF00', dark: '#CCCC00' },
+    3: { main: '#00FF00', dark: '#008000' },
+    4: { main: '#0000FF', dark: '#00008B' }
+};
 
 export function initCanvas() {
     const canvas = document.getElementById("canvas");
@@ -14,16 +21,23 @@ export function initImage() {
     return image;
 }
 
-export function initGameState() {
+export function initGameState(playersConfig) {
     return {
-        x: x,
-        y: y,
-        speed: speed,
-        angle: angle,
+        players: playersConfig.map((player, index) => ({
+            ...player,
+            x: 200,
+            y: 300 + (index * 25),
+            prevX: 200,
+            prevY: 300 + (index * 25),
+            speed: 2,
+            angle: Math.PI * 2,
+            trail: [],
+            laps: 0,
+            interval: null,
+            inGame: true,
+            color: playerColors[player.id] || playerColors[1],
+        })),
         keys: {},
-        trail: [],
-        interval: null,
-        isGameRunning: false,
     };
 }
 

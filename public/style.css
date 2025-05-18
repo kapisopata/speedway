@@ -2,5 +2,41 @@
     border: solid 2px black;
     background-color: blueviolet;
     margin: 0 auto;
+    display: none;
+}
+
+.players-container {
+    max-width: 400px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #f5f5f5;
+    border-radius: 8px;
+}
+
+.player-select {
+    margin: 10px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px;
+}
+
+.player-select input[type="text"] {
+    width: 100px;
+    padding: 5px;
+    margin-left: 10px;
+}
+
+button {
     display: block;
+    margin: 20px auto;
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+}
+
+button:hover {
+    background-color: #45a049;
 }

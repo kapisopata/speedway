@@ -1,23 +1,22 @@
-// game.js
 import { initCanvas, initImage, initGameState, initListeners } from './init.js';
-import { drawBackground } from './board.js';
+import { drawBackground, isInMiddleArea, isInOuterArea } from './board.js';
 import { trail_max_length } from './config.js';
 
 export default class Game {
-    constructor() {
+    constructor(playersConfig) {
         const { canvas, ctx } = initCanvas();
         this.canvas = canvas;
         this.ctx = ctx;
         this.image = initImage();
-        this.state = initGameState();
-        this.state.trail = [];
+        this.playersConfig = playersConfig;
+        this.state = initGameState(playersConfig);
         initListeners(this);
         // console.log("Game initialized", this.state);
         // console.log("initialized", initListeners(this));
     }
 
     startGame() {
-        this.state.isGameRunning = true;
+        this.state.inGame = true;
         this.state.interval = setInterval(() => {
             this.update();
             this.draw();
@@ -25,49 +24,97 @@ export default class Game {
     }
 
     update() {
-        if (this.state.keys["a"]) {
-            this.state.angle -= 0.03;
-        }
-        this.state.x += Math.cos(this.state.angle) * this.state.speed;
-        this.state.y += Math.sin(this.state.angle) * this.state.speed;
+        this.state.players.forEach(player => {
+            if (isInMiddleArea(this.ctx, player.x, player.y)) {
+                player.inGame = false;
+                this.restartGame();
+                alert(`gracz ${player.id} jest w middle area!`);
+                let canvas = document.getElementById("canvas");
+                canvas.style.display = "none";
+                let form = document.getElementById("gameForm");
+                form.style.display = "block";
+                clearInterval(this.state.interval);
+                return;
+            }
+
+            if (!isInOuterArea(this.ctx, player.x, player.y)) {
+                player.inGame = false;
+                this.restartGame();
+                alert(`gracz ${player.id} jest w outer area!`);
+                let canvas = document.getElementById("canvas");
+                canvas.style.display = "none";
+                let form = document.getElementById("gameForm");
+                form.style.display = "block";
+                clearInterval(this.state.interval);
+                return;
+            }
+
+            if (this.state.keys[player.key]) {
+                player.angle -= 0.03;
+            }
+
+            player.x += Math.cos(player.angle) * player.speed;
+            player.y += Math.sin(player.angle) * player.speed;
+        });
     }
 
     draw() {
-        this.ctx.clearRect(this.state.x - 15, this.state.y - 15, 30, 30);
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         drawBackground(this.ctx);
 
-        this.state.trail.push({ x: this.state.x, y: this.state.y });
-        if (this.state.trail.length > trail_max_length) {
-            this.state.trail.shift();
-        }
-
-        if (this.state.trail.length > 1) {
-            for (let i = 1; i < this.state.trail.length; i++) {
-                this.ctx.beginPath();
-                this.ctx.moveTo(this.state.trail[i - 1].x, this.state.trail[i - 1].y);
-                this.ctx.lineTo(this.state.trail[i].x, this.state.trail[i].y);
-
-                const gradient = this.ctx.createLinearGradient(
-                    this.state.trail[i - 1].x,
-                    this.state.trail[i - 1].y,
-                    this.state.trail[i].x,
-                    this.state.trail[i].y
-                );
-
-                const opacity = i / this.state.trail.length;
-                gradient.addColorStop(0, `rgba(255, 0, 0, ${opacity})`);
-                gradient.addColorStop(1, `rgba(139, 0, 0, ${opacity})`);
-
-                this.ctx.strokeStyle = gradient;
-                this.ctx.lineWidth = 3;
-                this.ctx.stroke();
+        this.state.players.forEach(player => {
+            player.trail.push({ x: player.x, y: player.y });
+            if (player.trail.length > trail_max_length) {
+                player.trail.shift();
             }
-        }
 
-        this.ctx.save();
-        this.ctx.translate(this.state.x, this.state.y);
-        this.ctx.rotate(this.state.angle + Math.PI);
-        this.ctx.drawImage(this.image, -15, -15, 30, 30);
-        this.ctx.restore();
+            if (player.trail.length > 1) {
+                for (let i = 1; i < player.trail.length; i++) {
+                    this.ctx.beginPath();
+                    this.ctx.moveTo(player.trail[i - 1].x, player.trail[i - 1].y);
+                    this.ctx.lineTo(player.trail[i].x, player.trail[i].y);
+
+                    const gradient = this.ctx.createLinearGradient(
+                        player.trail[i - 1].x,
+                        player.trail[i - 1].y,
+                        player.trail[i].x,
+                        player.trail[i].y
+                    );
+
+                    const opacity = i / player.trail.length;
+                    const mainColor = this.hexToRgba(player.color.main, opacity);
+                    const darkColor = this.hexToRgba(player.color.dark, opacity);
+
+                    gradient.addColorStop(0, mainColor);
+                    gradient.addColorStop(1, darkColor);
+
+                    this.ctx.strokeStyle = gradient;
+                    this.ctx.lineWidth = 3;
+                    this.ctx.stroke();
+                }
+            }
+
+            this.ctx.save();
+            this.ctx.translate(player.x, player.y);
+            this.ctx.rotate(player.angle + Math.PI);
+            this.ctx.drawImage(this.image, -15, -15, 30, 30);
+            this.ctx.restore();
+        });
+    }
+
+    hexToRgba(h, a) {
+        const r = parseInt(h.slice(1, 3), 16);
+        const g = parseInt(h.slice(3, 5), 16);
+        const b = parseInt(h.slice(5, 7), 16);
+        return `rgba(${r}, ${g}, ${b}, ${a})`;
+    }
+
+    restartGame() {
+        clearInterval(this.state.interval);
+        this.state = initGameState(this.playersConfig);
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        drawBackground(this.ctx);
+        this.draw();
+        this.startGame();
     }
 }

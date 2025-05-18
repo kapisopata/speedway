@@ -6,3 +6,4 @@ export const y = 335;
 export const speed = 2;
 export const angle = Math.PI * 2;
 export const trail_max_length = 250;
+// export const total_laps = 3;

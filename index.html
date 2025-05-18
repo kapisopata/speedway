@@ -5,10 +5,50 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="./public/style.css">
-    <title>Document</title>
+    <title>Speedway Game</title>
 </head>
 
 <body>
+    <form id="gameForm">
+        <div class="players-container">
+            <h2>Wybierz graczy i ich klawisze</h2>
+
+            <div class="player-select">
+                <label>
+                    <input type="checkbox" name="player1" id="player1" checked>
+                    Gracz 1
+                </label>
+                <input type="text" name="key1" id="key1" value="a" maxlength="1">
+            </div>
+
+            <div class="player-select">
+                <label>
+                    <input type="checkbox" name="player2" id="player2">
+                    Gracz 2
+                </label>
+                <input type="text" name="key2" id="key2" maxlength="1">
+            </div>
+
+            <div class="player-select">
+                <label>
+                    <input type="checkbox" name="player3" id="player3">
+                    Gracz 3
+                </label>
+                <input type="text" name="key3" id="key3" maxlength="1">
+            </div>
+
+            <div class="player-select">
+                <label>
+                    <input type="checkbox" name="player4" id="player4">
+                    Gracz 4
+                </label>
+                <input type="text" name="key4" id="key4" maxlength="1">
+            </div>
+        </div>
+
+        <button type="submit" id="btn">Rozpocznij grę</button>
+    </form>
+
     <canvas id="canvas"></canvas>
 
     <script type="module" src="./modules/main.js"></script>
