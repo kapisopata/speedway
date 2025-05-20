@@ -22,23 +22,28 @@ export function initImage() {
 }
 
 export function initGameState(playersConfig) {
-    return {
-        players: playersConfig.map((player, index) => ({
-            ...player,
-            x: 200,
-            y: 300 + (index * 25),
-            prevX: 200,
-            prevY: 300 + (index * 25),
-            speed: 2,
-            angle: Math.PI * 2,
-            trail: [],
-            laps: 0,
-            interval: null,
-            inGame: true,
-            color: playerColors[player.id] || playerColors[1],
-        })),
+    const gameState = {
+        players: playersConfig.map((player, index) => {
+            const playerState = {
+                ...player,
+                x: 200,
+                y: 300 + (index * 25),
+                // prevX: 200,
+                // prevY: 300 + (index * 25),
+                speed: 2,
+                angle: Math.PI * 2,
+                trail: [],
+                // laps: 0,
+                interval: null,
+                inGame: true,
+                color: playerColors[player.id] || playerColors[1],
+            };
+            return playerState;
+        }),
         keys: {},
     };
+    // console.log(gameState);
+    return gameState;
 }
 
 export function initListeners(game) {

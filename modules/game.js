@@ -11,8 +11,8 @@ export default class Game {
         this.playersConfig = playersConfig;
         this.state = initGameState(playersConfig);
         initListeners(this);
-        // console.log("Game initialized", this.state);
-        // console.log("initialized", initListeners(this));
+        // console.log("Game init", this.state);
+        // console.log("init", initListeners(this));
     }
 
     startGame() {
